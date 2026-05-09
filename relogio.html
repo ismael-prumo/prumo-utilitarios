@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRUMO | Relógio de Precisão</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #2d3436; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .clock-container { text-align: center; background: rgba(255,255,255,0.05); padding: 50px; border-radius: 20px; border: 1px solid #0984e3; box-shadow: 0 0 30px rgba(9, 132, 227, 0.2); }
+        #clock { font-size: 80px; font-weight: 900; color: #0984e3; margin: 0; }
+        #date { font-size: 20px; color: #dfe6e9; margin-top: 10px; }
+        .back-link { margin-top: 30px; display: inline-block; color: #0984e3; text-decoration: none; font-weight: bold; border: 1px solid #0984e3; padding: 10px 20px; border-radius: 5px; transition: 0.3s; }
+        .back-link:hover { background: #0984e3; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="clock-container">
+    <p style="letter-spacing: 5px; color: #0984e3;">HORÁRIO OFICIAL</p>
+    <div id="clock">00:00:00</div>
+    <div id="date">Carregando...</div>
+</div>
+
+<a href="index.html" class="back-link">← VOLTAR AO MENU</a>
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+       
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('date').textContent = now.toLocaleDateString('pt-BR', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
+
+</body>
+</html>
