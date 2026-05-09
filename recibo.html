@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRUMO | Gerador de Recibo</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; border-top: 5px solid #0984e3; }
+        h2 { text-align: center; color: #2d3436; margin-bottom: 25px; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #2d3436; }
+        input { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 6px; box-sizing: border-box; font-size: 16px; margin-bottom: 10px; }
+        button { width: 100%; background-color: #0984e3; color: white; border: none; padding: 15px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        button:hover { background-color: #074b81; }
+        .back-link { margin-top: 20px; font-size: 14px; display: inline-block; color: #0984e3; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Gerador de Recibo</h2>
+   
+    <label>Valor (R$):</label>
+    <input type="number" id="valor" placeholder="0.00">
+
+    <label>Recebi de:</label>
+    <input type="text" id="pagador" placeholder="Nome do Cliente">
+
+    <label>Referente a:</label>
+    <input type="text" id="referencia" placeholder="Ex: Consultoria, Venda, Aluguel">
+
+    <button onclick="gerar()">GERAR RECIBO</button>
+    <center><a href="index.html" class="back-link">← Voltar ao Menu Principal</a></center>
+</div>
+
+<script>
+    function gerar() {
+        const v = document.getElementById('valor').value;
+        const p = document.getElementById('pagador').value;
+        const r = document.getElementById('referencia').value;
+        if(!v || !p || !r) return alert("Sócio, preencha todos os campos!");
+       
+        const data = new Date().toLocaleDateString('pt-BR');
+        const doc = `--- RECIBO PRUMO ---\nVALOR: R$ ${v}\nPAGADOR: ${p}\nREFERENTE: ${r}\nDATA: ${data}\n-------------------`;
+       
+        alert("Recibo gerado com sucesso!\n\n" + doc);
+    }
+</script>
+
+</body>
+</html>
+
+ 
