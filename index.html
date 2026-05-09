@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRUMO | Utilitários & Precisão</title>
+    <style>
+        :root { --primary: #0984e3; --dark: #2d3436; --light: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { width: 100%; background: var(--dark); color: white; text-align: center; padding: 40px 0; border-bottom: 5px solid var(--primary); }
+        .logo { letter-spacing: 6px; font-size: 32px; margin: 0; font-weight: 900; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 90%; max-width: 500px; margin-top: -30px; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; color: var(--dark); }
+        input { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 6px; box-sizing: border-box; font-size: 16px; margin-bottom: 10px; }
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; margin-top: 20px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; text-transform: uppercase; }
+        button:hover { background: #074b81; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3); }
+        .ad-space { background: #f1f2f6; height: 90px; margin: 25px 0; border: 2px dashed #bdc3c7; display: flex; align-items: center; justify-content: center; color: #7f8c8d; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        footer { margin-top: auto; padding: 20px; color: #b2bec3; font-size: 12px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 class="logo">PRUMO</h1>
+    <small id="slogan">Utilitários & Precisão</small>
+</header>
+
+<div class="container">
+    <h2 id="title" style="text-align:center; color: var(--dark);">Gerador de Recibo</h2>
+   
+    <div class="ad-space">Espaço para Anúncios (Google AdSense)</div>
+
+    <label id="lbl-val">Valor:</label>
+    <input type="text" id="valor" placeholder="0.00">
+
+    <label id="lbl-name">Recebi de:</label>
+    <input type="text" id="nome" placeholder="Nome Completo">
+
+    <label id="lbl-ref">Referente a:</label>
+    <input type="text" id="referente" placeholder="Ex: Venda, Serviço, Aluguel">
+
+    <button onclick="gerarRecibo()" id="btn">GERAR DOCUMENTO (PDF)</button>
+
+    <div class="ad-space">Espaço para Anúncios (Google AdSense)</div>
+</div>
+
+<footer id="footer-text">
+    © 2026 PRUMO - Powered by Zaga Útil Tools<br>
+    <small>Versão Internacional Multilíngue</small>
+</footer>
+
+<script>
+    const translations = {
+        'pt': { title: 'Gerador de Recibo', val: 'Valor (R$):', name: 'Recebi de:', ref: 'Referente a:', btn: 'GERAR DOCUMENTO', slogan: 'Utilitários & Precisão' },
+        'en': { title: 'Receipt Generator', val: 'Amount ($):', name: 'Received from:', ref: 'Regarding:', btn: 'GENERATE DOCUMENT', slogan: 'Utility & Precision' },
+        'es': { title: 'Generador de Recibos', val: 'Valor ($):', name: 'Recibido de:', ref: 'Referente a:', btn: 'GENERAR DOCUMENTO', slogan: 'Utilidad y Precisión' }
+    };
+
+    const userLang = navigator.language.split('-')[0] || 'en';
+    const lang = translations[userLang] || translations['en'];
+
+    document.getElementById('title').innerText = lang.title;
+    document.getElementById('lbl-val').innerText = lang.val;
+    document.getElementById('lbl-name').innerText = lang.name;
+    document.getElementById('lbl-ref').innerText = lang.ref;
+    document.getElementById('btn').innerText = lang.btn;
+    document.getElementById('slogan').innerText = lang.slogan;
+
+    function gerarRecibo() {
+        const valor = document.getElementById('valor').value;
+        const nome = document.getElementById('nome').value;
+        const ref = document.getElementById('referente').value;
+        const data = new Date().toLocaleDateString();
+
+        const printWindow = window.open('', '', 'width=800,height=600');
+        printWindow.document.write(`
+            <div style="padding:40px; border: 10px solid #2d3436; font-family: sans-serif; color: #2d3436;">
+                <h1 style="text-align:center; margin-bottom: 0;">PRUMO</h1>
+                <p style="text-align:center; margin-top: 0; font-size: 12px; letter-spacing: 2px;">OFFICIAL DOCUMENT</p>
+                <hr style="border: 1px solid #dfe6e9; margin: 30px 0;">
+                <p style="font-size:28px; margin-bottom: 40px;"><b>TOTAL:</b> ${valor}</p>
+                <p style="font-size:18px; line-height: 1.6;">Recebi de / Received from: <b>${nome}</b></p>
+                <p style="font-size:18px; line-height: 1.6;">Referente a / Regarding: <b>${ref}</b></p>
+                <p style="margin-top:60px; text-align: right;"><b>Data:</b> ${data}</p>
+                <br><br><br>
+                <div style="border-top: 2px solid #2d3436; width: 300px; text-align:center; margin: 0 auto; padding-top: 10px;">
+                    Assinatura / Signature
+                </div>
+                <p style="text-align:center; font-size: 10px; color: #b2bec3; margin-top: 50px;">Generated by Prumo Utilitários</p>
+            </div>
+        `);
+        printWindow.print();
+    }
+</script>
+
+</body>
+</html>
+
+ 
