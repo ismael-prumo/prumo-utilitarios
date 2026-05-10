@@ -3,72 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRUMO | Relógio Global Total</title>
+    <title>PRUMO | Relógio Público Global</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .clock-container { background: #2d3436; padding: 30px; border-radius: 20px; border: 2px solid #0984e3; text-align: center; width: 100%; max-width: 450px; box-shadow: 0 0 30px rgba(9, 132, 227, 0.3); }
-        .search-box { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; background: #1a1a1a; color: white; border: 1px solid #0984e3; font-size: 16px; box-sizing: border-box; }
-        #time { font-size: 55px; font-weight: 900; color: #0984e3; margin: 10px 0; font-family: 'Courier New', Courier, monospace; }
-        #location-display { font-size: 18px; color: #f1c40f; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
-        #date { color: #dfe6e9; margin-bottom: 20px; }
-        .back-link { margin-top: 20px; display: inline-block; color: #0984e3; text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid #0984e3; border-radius: 8px; transition: 0.3s; }
-        .back-link:hover { background: #0984e3; color: white; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .clock-card { background: #1e293b; padding: 35px; border-radius: 25px; border: 2px solid #38bdf8; text-align: center; width: 100%; max-width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .search-box { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #334155; background: #f8fafc; color: #1e293b; font-size: 18px; font-weight: bold; outline: none; transition: 0.3s; }
+        .search-box:focus { border-color: #38bdf8; box-shadow: 0 0 10px #38bdf8; }
+        #time { font-size: 65px; font-weight: 900; color: #38bdf8; margin: 15px 0; font-family: 'Courier New', monospace; text-shadow: 0 0 20px rgba(56, 189, 248, 0.4); }
+        #location-display { font-size: 22px; color: #fbbf24; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+        #date { color: #94a3b8; font-size: 16px; margin-bottom: 25px; }
+        .back-link { margin-top: 25px; display: inline-block; color: #38bdf8; text-decoration: none; font-weight: bold; padding: 12px 25px; border: 2px solid #38bdf8; border-radius: 12px; transition: 0.3s; }
+        .back-link:hover { background: #38bdf8; color: #0f172a; }
+        datalist { font-size: 18px; }
     </style>
 </head>
 <body>
 
-<h2 style="letter-spacing: 3px; color: #0984e3;">PRUMO | GLOBAL TIME</h2>
+<h2 style="letter-spacing: 4px; color: #38bdf8; margin-bottom: 20px;">PRUMO UTILITÁRIOS</h2>
 
-<div class="clock-container">
-    <p style="margin-bottom: 10px; color: #dfe6e9;">Digite o nome da Cidade ou País:</p>
-    <input list="timezones" id="timezoneInput" class="search-box" placeholder="Ex: Hong Kong, Chile, Iraq..." oninput="updateTimezone()">
+<div class="clock-card">
+    <p style="color: #94a3b8; margin-bottom: 15px; font-weight: bold;">ONDE VOCÊ QUER SABER A HORA?</p>
+    <input list="world-cities" id="citySearch" class="search-box" placeholder="Ex: Índia, Finlândia, Tóquio..." oninput="changeTimezone()">
    
-    <datalist id="timezones"></datalist>
+    <datalist id="world-cities">
+        </datalist>
 
-    <div id="location-display">Brasília, Brasil</div>
-    <div id="time">00:00:00</div>
-    <div id="date">Carregando...</div>
+    <div style="margin-top: 30px;">
+        <div id="location-display">BRASÍLIA, BRASIL</div>
+        <div id="time">00:00:00</div>
+        <div id="date">Carregando...</div>
+    </div>
 </div>
 
-<a href="index.html" class="back-link">← VOLTAR AO MENU</a>
+<a href="index.html" class="back-link">← VOLTAR AO MENU PRINCIPAL</a>
 
 <script>
-    const input = document.getElementById('timezoneInput');
-    const display = document.getElementById('location-display');
-    let currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    let currentTz = "America/Sao_Paulo";
+    const cityInput = document.getElementById('citySearch');
+    const locationDiv = document.getElementById('location-display');
+    const datalist = document.getElementById('world-cities');
 
-    const tzList = Intl.supportedValuesOf('timeZone');
-    const datalist = document.getElementById('timezones');
-    tzList.forEach(tz => {
-        const option = document.createElement('option');
-        option.value = tz;
-        datalist.appendChild(option);
+    // Lista estendida para abranger o que você pediu (Índia, Finlândia, etc)
+    const cities = [
+        { name: "Nova Deli, Índia", tz: "Asia/Kolkata" },
+        { name: "Helsinque, Finlândia", tz: "Europe/Helsinki" },
+        { name: "Singapura", tz: "Asia/Singapore" },
+        { name: "Islamabad, Paquistão", tz: "Asia/Karachi" },
+        { name: "Hong Kong, China", tz: "Asia/Hong_Kong" },
+        { name: "Tegucigalpa, Honduras", tz: "America/Tegucigalpa" },
+        { name: "Santiago, Chile", tz: "America/Santiago" },
+        { name: "Jerusalém, Israel", tz: "Asia/Jerusalem" },
+        { name: "Bagdá, Iraque", tz: "Asia/Baghdad" },
+        { name: "Cabul, Afeganistão", tz: "Asia/Kabul" },
+        { name: "Tóquio, Japão", tz: "Asia/Tokyo" },
+        { name: "Dubai, Emirados Árabes", tz: "Asia/Dubai" },
+        { name: "Londres, Grã-Bretanha", tz: "Europe/London" },
+        { name: "Nova York, EUA", tz: "America/New_York" },
+        { name: "Roma, Itália", tz: "Europe/Rome" },
+        { name: "Lisboa, Portugal", tz: "Europe/Lisbon" },
+        { name: "Paris, França", tz: "Europe/Paris" },
+        { name: "Pequim, China", tz: "Asia/Shanghai" },
+        { name: "Moscou, Rússia", tz: "Europe/Moscow" },
+        { name: "Sydney, Austrália", tz: "Australia/Sydney" }
+    ];
+
+    // Preenche o datalist para o usuário ver as opções enquanto digita
+    cities.forEach(city => {
+        let opt = document.createElement('option');
+        opt.value = city.name;
+        datalist.appendChild(opt);
     });
 
-    function updateTimezone() {
-        const val = input.value;
-        if (tzList.includes(val)) {
-            currentTimezone = val;
-            display.textContent = val.replace(/_/g, ' ').split('/').pop();
+    function changeTimezone() {
+        const selected = cities.find(c => c.name === cityInput.value);
+        if (selected) {
+            currentTz = selected.tz;
+            locationDiv.textContent = selected.name;
         }
     }
 
-    function tick() {
+    function updateClock() {
         const now = new Date();
-        const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: currentTimezone, hour12: false };
-        const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: currentTimezone };
+        const tOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: currentTz, hour12: false };
+        const dOpts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: currentTz };
        
-        try {
-            document.getElementById('time').textContent = now.toLocaleTimeString('pt-BR', timeOptions);
-            document.getElementById('date').textContent = now.toLocaleDateString('pt-BR', dateOptions);
-        } catch (e) {}
+        document.getElementById('time').textContent = now.toLocaleTimeString('pt-BR', tOpts);
+        document.getElementById('date').textContent = now.toLocaleDateString('pt-BR', dOpts);
     }
 
-    setInterval(tick, 1000);
-    tick();
+    setInterval(updateClock, 1000);
+    updateClock();
 </script>
 
 </body>
 </html>
-
- 
