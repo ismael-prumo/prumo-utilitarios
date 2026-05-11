@@ -3,67 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRUMO | Analisador de Apostas</title>
+    <title>PRUMO | Analisador Pro</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border-top: 6px solid #0984e3; }
-        h2 { color: #2d3436; text-align: center; margin-bottom: 20px; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #636e72; }
-        input { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; background: #0984e3; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        button:hover { background: #074b81; }
-        #resultado { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; background: #e3f2fd; border: 1px solid #0984e3; color: #074b81; }
-        .back-link { margin-top: 20px; display: inline-block; color: #0984e3; text-decoration: none; font-weight: bold; }
+        :root { --primary: #00ff88; --bg: #0f172a; --card: #1e293b; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { max-width: 500px; width: 100%; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: var(--primary); letter-spacing: 3px; margin: 0; }
+        .card { background: var(--card); border-radius: 20px; padding: 25px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #94a3b8; font-size: 14px; }
+        input { width: 100%; background: #0f172a; border: 2px solid #334155; padding: 12px; border-radius: 12px; color: white; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        button { width: 100%; background: var(--primary); color: #0f172a; border: none; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .result-area { margin-top: 25px; display: none; border-top: 1px solid #334155; padding-top: 20px; }
+        .prob-bar-container { background: #0f172a; height: 12px; border-radius: 6px; margin: 10px 0; overflow: hidden; }
+        .prob-bar { height: 100%; background: var(--primary); width: 0%; transition: 1s ease-in-out; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; background: #064e3b; color: var(--primary); }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Analisador Prumo ⚽</h2>
-   
-    <div class="input-group">
-        <label>Gols sofridos (Últimos 5 jogos - Casa):</label>
-        <input type="number" id="golsCasa" placeholder="Ex: 4">
+    <div class="container">
+        <div class="header">
+            <div class="badge">TECNOLOGIA PRUMO ANALYTICS</div>
+            <h1>ANALISADOR</h1>
+        </div>
+
+        <div class="card">
+            <div class="input-group">
+                <label>Média de Gols (Casa)</label>
+                <input type="number" id="casa" step="0.1" placeholder="Ex: 1.8">
+            </div>
+            <div class="input-group">
+                <label>Média de Gols (Visitante)</label>
+                <input type="number" id="fora" step="0.1" placeholder="Ex: 1.2">
+            </div>
+            <div class="input-group">
+                <label>Média de Cantos (Partida)</label>
+                <input type="number" id="cantos" step="0.1" placeholder="Ex: 10.5">
+            </div>
+            <button onclick="analisar()">GERAR ANÁLISE TÉCNICA</button>
+
+            <div id="resultado" class="result-area">
+                <h3 style="margin-top: 0; color: var(--primary);">Resultado da Projeção:</h3>
+                <div id="mercado-gols"></div>
+                <div class="prob-bar-container"><div id="barra-gols" class="prob-bar"></div></div>
+                <p id="txt-gols" style="font-size: 14px; color: #94a3b8;"></p>
+               
+                <div id="mercado-cantos" style="margin-top: 20px; font-weight: bold;"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="input-group">
-        <label>Gols marcados (Últimos 5 jogos - Fora):</label>
-        <input type="number" id="golsFora" placeholder="Ex: 6">
-    </div>
+    <script>
+        function analisar() {
+            const casa = parseFloat(document.getElementById('casa').value);
+            const fora = parseFloat(document.getElementById('fora').value);
+            const cantos = parseFloat(document.getElementById('cantos').value);
 
-    <button onclick="analisar()">CALCULAR PROBABILIDADE</button>
+            if(isNaN(casa) || isNaN(fora)) { alert("Preencha as médias de gols!"); return; }
 
-    <div id="resultado"></div>
-   
-    <center><a href="index.html" class="back-link">← Voltar ao Menu</a></center>
-</div>
+            const soma = casa + fora;
+            let prob = (soma / 4) * 100;
+            if(prob > 100) prob = 98;
 
-<script>
-    function analisar() {
-        const casa = parseFloat(document.getElementById('golsCasa').value);
-        const fora = parseFloat(document.getElementById('golsFora').value);
+            document.getElementById('resultado').style.display = 'block';
+            document.getElementById('barra-gols').style.width = prob + '%';
+           
+            let mercado = "";
+            let desc = "";
 
-        if(isNaN(casa) || isNaN(fora)) {
-            alert("Sócio, insira os dados para a análise!");
-            return;
+            if(soma >= 2.5) {
+                mercado = "🔥 TENDÊNCIA: OVER 2.5 GOLS";
+                desc = "Jogo com alta expectativa de movimentação ofensiva.";
+            } else if (soma >= 1.5) {
+                mercado = "✅ TENDÊNCIA: OVER 1.5 GOLS";
+                desc = "Expectativa de jogo moderado, ideal para segurança.";
+            } else {
+                mercado = "❄️ TENDÊNCIA: UNDER 2.5 GOLS";
+                desc = "Times com baixo índice de finalização convertida.";
+            }
+
+            document.getElementById('mercado-gols').innerHTML = mercado;
+            document.getElementById('txt-gols').innerHTML = desc + " (" + prob.toFixed(0) + "% de confiança)";
+
+            if(!isNaN(cantos)) {
+                let msgCantos = cantos >= 9.5 ? "🚩 Projeção: Over 8.5 Cantos" : "🚩 Projeção: Under 10.5 Cantos";
+                document.getElementById('mercado-cantos').innerHTML = msgCantos;
+            }
         }
-
-        const media = (casa + fora) / 10;
-        const prob = (media * 100).toFixed(1);
-       
-        let dica = "";
-        if(prob > 70) dica = "🔥 Forte tendência para Over 1.5 Gols";
-        else if(prob > 40) dica = "⚖️ Jogo equilibrado - Cuidado";
-        else dica = "🧊 Tendência de poucos gols (Under)";
-
-        const resDiv = document.getElementById('resultado');
-        resDiv.style.display = "block";
-        resDiv.innerHTML = `<strong>Resultado da Análise:</strong><br>Chance de Gols: ${prob}%<br><br><strong>Sugestão:</strong> ${dica}`;
-    }
-</script>
-
+    </script>
 </body>
 </html>
 
- na
+ 
